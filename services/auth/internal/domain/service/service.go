@@ -95,6 +95,16 @@ func (s *authService) LoginExistingUser(email string, password string) (*JWTToke
 		return &JWTTokenPair{}, err
 	}
 
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	if err != nil {
+		if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
+			log.Error("invalid password", slog.Attr{Key: "email", Value: slog.StringValue(email)})
+			return &JWTTokenPair{}, ErrInvalidPassword
+		}
+		log.Error("failed to compare password", slog.Attr{Key: "error", Value: slog.StringValue(err.Error())})
+		return &JWTTokenPair{}, err
+	}
+
 	jwtTokens, err := generateJWTTokenPair(user.ID)
 	if err != nil {
 		log.Error("failed to create JWT tokens", slog.Attr{Key: "error", Value: slog.StringValue(err.Error())},

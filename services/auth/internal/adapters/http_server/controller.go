@@ -79,6 +79,10 @@ func (c *authController) Login(ctx *gin.Context) {
 			return
 		}
 
+		if errors.Is(err, service.ErrInvalidPassword) {
+			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid password"})
+			return
+		}
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
