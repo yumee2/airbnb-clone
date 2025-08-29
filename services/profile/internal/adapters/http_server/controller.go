@@ -16,8 +16,8 @@ type ProfileController interface {
 	CreateProfile(ctx *gin.Context)
 	ServeImages(ctx *gin.Context)
 	GetProfile(ctx *gin.Context)
-	// DeleteProfile(ctx *gin.Context)
-	// UpdateProfile(ctx *gin.Context)
+	DeleteProfile(ctx *gin.Context)
+	UpdateProfile(ctx *gin.Context)
 	GetYourProfile(ctx *gin.Context)
 }
 
@@ -143,6 +143,93 @@ func (c *profileController) GetYourProfile(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, profileResponse)
+}
+
+func (c *profileController) DeleteProfile(ctx *gin.Context) {
+	const fn = "adapters.controller.GetYourProfile"
+	log := c.log.With(
+		slog.String("fn", fn),
+	)
+
+	userID, err := middleware.GetUserIDFromContext(ctx)
+	if err != nil {
+		log.Error("failed to get user id out of context", slog.Attr{Key: "error", Value: slog.StringValue(err.Error())})
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+		return
+	}
+
+	if err = c.profileService.DeleteProfile(userID); err != nil {
+		if errors.Is(err, service.ErrProfileNotFound) {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Profile with provided ID not found"})
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "OK"})
+}
+
+func (c *profileController) UpdateProfile(ctx *gin.Context) {
+	const fn = "adapters.controller.UpdateProfile"
+	log := c.log.With(
+		slog.String("fn", fn),
+	)
+
+	userID, err := middleware.GetUserIDFromContext(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+		return
+	}
+
+	if err := ctx.Request.ParseMultipartForm(10 << 20); err != nil { // 10MB max
+		log.Error("failed to parse form data", slog.Attr{Key: "error", Value: slog.StringValue(err.Error())})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Failed to parse form"})
+		return
+	}
+
+	request := &entity.UpdateProfileRequest{}
+
+	if phoneNumber := ctx.Request.FormValue("phone_number"); phoneNumber != "" {
+		request.PhoneNumber = &phoneNumber
+	}
+	if name := ctx.Request.FormValue("name"); name != "" {
+		request.Name = &name
+	}
+	if surname := ctx.Request.FormValue("surname"); surname != "" {
+		request.Surname = &surname
+	}
+
+	if dobStr := ctx.Request.FormValue("date_of_birth"); dobStr != "" {
+		dob, err := time.Parse("02-01-2006", dobStr)
+		if err != nil {
+			log.Error("failed to parse date of birth", slog.Attr{Key: "error", Value: slog.StringValue(err.Error())})
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid date format. Use DD-MM-YYYY"})
+			return
+		}
+		request.DateOfBirth = &dob
+	}
+
+	imageFile, err := ctx.FormFile("image")
+	if err != nil && err != http.ErrMissingFile {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid image file"})
+		return
+	}
+
+	if request.PhoneNumber == nil && request.Name == nil && request.Surname == nil &&
+		request.DateOfBirth == nil && imageFile == nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "No fields to update"})
+		return
+	}
+
+	profile, err := c.profileService.UpdateProfile(userID, request, imageFile)
+	if err != nil {
+		log.Error("failed to update profile", slog.Attr{Key: "error", Value: slog.StringValue(err.Error())})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, profile)
 }
 
 func (c *profileController) ServeImages(ctx *gin.Context) {

@@ -19,6 +19,13 @@ type CreateProfileRequest struct {
 	Image       []byte    `json:"-"`
 }
 
+type UpdateProfileRequest struct {
+	PhoneNumber *string    `json:"phone_number,omitempty"`
+	Name        *string    `json:"name,omitempty"`
+	Surname     *string    `json:"surname,omitempty"`
+	DateOfBirth *time.Time `json:"date_of_birth,omitempty"`
+}
+
 type ProfileResponse struct {
 	ID          string    `json:"id"`
 	PhoneNumber string    `json:"phone_number,omitempty"`

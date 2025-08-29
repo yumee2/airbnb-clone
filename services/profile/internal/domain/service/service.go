@@ -18,6 +18,8 @@ type ProfileService interface {
 	CreateProfile(request *entity.CreateProfileRequest, userId string, imageFile *multipart.FileHeader) (*entity.ProfileResponse, error)
 	GetYourProfile(userId string) (*entity.ProfileResponse, error)
 	GetProfile(userId string) (*entity.PublicProfileResponse, error)
+	DeleteProfile(userId string) error
+	UpdateProfile(userId string, request *entity.UpdateProfileRequest, imageFile *multipart.FileHeader) (*entity.ProfileResponse, error)
 }
 
 type profileService struct {
@@ -117,6 +119,81 @@ func (s *profileService) GetProfile(userId string) (*entity.PublicProfileRespons
 		ID:       profile.ID,
 		Name:     profile.Name,
 		ImageURL: "/uploads/" + filepath.Base(profile.ImagePath),
+	}, nil
+}
+
+func (s *profileService) DeleteProfile(userId string) error {
+	const fn = "domain.service.DeleteProfile"
+	log := s.log.With(
+		slog.String("fn", fn),
+	)
+
+	if err := s.profileRepository.DeleteProfileByID(userId); err != nil {
+		if errors.Is(err, repository.ErrProfileNotFound) {
+			log.Error("profile not found", slog.Attr{Key: "error", Value: slog.StringValue(err.Error())})
+			return ErrProfileNotFound
+		}
+		log.Error("failed to delete user profile", slog.Attr{Key: "error", Value: slog.StringValue(err.Error())})
+		return err
+	}
+
+	return nil
+}
+
+func (s *profileService) UpdateProfile(userId string, request *entity.UpdateProfileRequest, imageFile *multipart.FileHeader) (*entity.ProfileResponse, error) {
+	const fn = "domain.service.UpdateProfile"
+	log := s.log.With(
+		slog.String("fn", fn),
+	)
+
+	updates := make(map[string]interface{})
+
+	if request.PhoneNumber != nil {
+		updates["phone_number"] = *request.PhoneNumber
+	}
+	if request.Name != nil {
+		updates["name"] = *request.Name
+	}
+	if request.Surname != nil {
+		updates["surname"] = *request.Surname
+	}
+	if request.DateOfBirth != nil {
+		updates["date_of_birth"] = *request.DateOfBirth
+	}
+
+	var newImagePath string
+	if imageFile != nil {
+		newImagePath, err := s.saveImage(imageFile, userId)
+		if err != nil {
+			log.Error("failed to save new image", slog.Attr{Key: "error", Value: slog.StringValue(err.Error())})
+			return nil, err
+		}
+		updates["image_path"] = newImagePath
+	}
+
+	if len(updates) > 0 {
+		if err := s.profileRepository.UpdateProfileFields(userId, updates); err != nil {
+			if newImagePath != "" {
+				os.Remove(newImagePath)
+			}
+			log.Error("failed to update profile", slog.Attr{Key: "error", Value: slog.StringValue(err.Error())})
+			return nil, err
+		}
+	}
+
+	updatedProfile, err := s.profileRepository.GetMe(userId)
+	if err != nil {
+		log.Error("failed to get updated profile", slog.Attr{Key: "error", Value: slog.StringValue(err.Error())})
+		return nil, err
+	}
+
+	return &entity.ProfileResponse{
+		ID:          updatedProfile.ID,
+		PhoneNumber: updatedProfile.PhoneNumber,
+		Name:        updatedProfile.Name,
+		Surname:     updatedProfile.Surname,
+		DateOfBirth: updatedProfile.DateOfBirth,
+		ImageURL:    "/uploads/" + filepath.Base(updatedProfile.ImagePath),
 	}, nil
 }
 
