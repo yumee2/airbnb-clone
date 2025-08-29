@@ -26,7 +26,7 @@ type profileService struct {
 
 func NewProfileService(profileRepo repository.ProfileRepository, logger *slog.Logger, uploadDir string) ProfileService {
 	if err := os.MkdirAll(uploadDir, 0755); err != nil {
-		logger.Error("Failed to create upload directory: %v", err)
+		logger.Error("Failed to create upload directory: %v", slog.Attr{Key: "error", Value: slog.StringValue(err.Error())})
 		os.Exit(1)
 	}
 
