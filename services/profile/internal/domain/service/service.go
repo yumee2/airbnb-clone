@@ -16,6 +16,8 @@ import (
 
 type ProfileService interface {
 	CreateProfile(request *entity.CreateProfileRequest, userId string, imageFile *multipart.FileHeader) (*entity.ProfileResponse, error)
+	GetYourProfile(userId string) (*entity.ProfileResponse, error)
+	GetProfile(userId string) (*entity.PublicProfileResponse, error)
 }
 
 type profileService struct {
@@ -67,6 +69,54 @@ func (s *profileService) CreateProfile(request *entity.CreateProfileRequest, use
 		Surname:     profile.Surname,
 		DateOfBirth: profile.DateOfBirth,
 		ImageURL:    "/uploads/" + filepath.Base(imagePath),
+	}, nil
+}
+
+func (s *profileService) GetYourProfile(userId string) (*entity.ProfileResponse, error) {
+	const fn = "domain.service.GetYourProfile"
+	log := s.log.With(
+		slog.String("fn", fn),
+	)
+
+	profile, err := s.profileRepository.GetMe(userId)
+	if err != nil {
+		if errors.Is(err, repository.ErrProfileNotFound) {
+			return &entity.ProfileResponse{}, ErrProfileNotFound
+		}
+		log.Error("failed to get me profile", slog.Attr{Key: "error", Value: slog.StringValue(err.Error())})
+		return &entity.ProfileResponse{}, err
+	}
+
+	return &entity.ProfileResponse{
+		ID:          profile.ID,
+		PhoneNumber: profile.PhoneNumber,
+		Name:        profile.Name,
+		Surname:     profile.Surname,
+		DateOfBirth: profile.DateOfBirth,
+		ImageURL:    "/uploads/" + filepath.Base(profile.ImagePath),
+	}, nil
+
+}
+
+func (s *profileService) GetProfile(userId string) (*entity.PublicProfileResponse, error) {
+	const fn = "domain.service.GetProfile"
+	log := s.log.With(
+		slog.String("fn", fn),
+	)
+
+	profile, err := s.profileRepository.GetUserById(userId)
+	if err != nil {
+		if errors.Is(err, repository.ErrProfileNotFound) {
+			return &entity.PublicProfileResponse{}, ErrProfileNotFound
+		}
+		log.Error("failed to get profile by user id", slog.Attr{Key: "error", Value: slog.StringValue(err.Error())})
+		return &entity.PublicProfileResponse{}, err
+	}
+
+	return &entity.PublicProfileResponse{
+		ID:       profile.ID,
+		Name:     profile.Name,
+		ImageURL: "/uploads/" + filepath.Base(profile.ImagePath),
 	}, nil
 }
 

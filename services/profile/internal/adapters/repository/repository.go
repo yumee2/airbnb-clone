@@ -14,6 +14,10 @@ import (
 
 type ProfileRepository interface {
 	CreateNewProfile(profile *entity.Profile) error
+	GetUserById(userId string) (*entity.Profile, error)
+	GetMe(userId string) (*entity.Profile, error)
+	DeleteProfileByID(id string) error
+	UpdateProfileFields(id string, updates map[string]interface{}) error
 }
 
 type storage struct {
@@ -74,7 +78,7 @@ func (s *storage) GetUserById(userId string) (*entity.Profile, error) {
 }
 
 func (s *storage) GetMe(userId string) (*entity.Profile, error) {
-	const fn = "adapters.repository.GetUserById"
+	const fn = "adapters.repository.GetMe"
 	var profile *entity.Profile
 
 	result := s.db.Where("id = ?", userId).First(&profile)

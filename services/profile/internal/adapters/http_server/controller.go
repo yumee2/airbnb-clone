@@ -1,6 +1,7 @@
 package httpserver
 
 import (
+	"errors"
 	"log/slog"
 	"net/http"
 	"time"
@@ -14,10 +15,10 @@ import (
 type ProfileController interface {
 	CreateProfile(ctx *gin.Context)
 	ServeImages(ctx *gin.Context)
-	// GetProfile(ctx *gin.Context)
+	GetProfile(ctx *gin.Context)
 	// DeleteProfile(ctx *gin.Context)
 	// UpdateProfile(ctx *gin.Context)
-	// GetYourProfile(ctx *gin.Context)
+	GetYourProfile(ctx *gin.Context)
 }
 
 type profileController struct {
@@ -91,6 +92,57 @@ func (c *profileController) CreateProfile(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusCreated, profile)
+}
+
+func (c *profileController) GetProfile(ctx *gin.Context) {
+	const fn = "adapters.controller.GetProfile"
+	log := c.log.With(
+		slog.String("fn", fn),
+	)
+
+	userID := ctx.Param("id")
+	if userID == "" {
+		log.Error("user id was not provided")
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "User ID was not provided"})
+		return
+	}
+	profileResponse, err := c.profileService.GetProfile(userID)
+	if err != nil {
+		if errors.Is(err, service.ErrProfileNotFound) {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "User with provided ID was not found"})
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, profileResponse)
+}
+
+func (c *profileController) GetYourProfile(ctx *gin.Context) {
+	const fn = "adapters.controller.GetYourProfile"
+	log := c.log.With(
+		slog.String("fn", fn),
+	)
+
+	userID, err := middleware.GetUserIDFromContext(ctx)
+	if err != nil {
+		log.Error("failed to get user id out of context", slog.Attr{Key: "error", Value: slog.StringValue(err.Error())})
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+		return
+	}
+
+	profileResponse, err := c.profileService.GetYourProfile(userID)
+	if err != nil {
+		if errors.Is(err, service.ErrProfileNotFound) {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "User with provided ID was not found"})
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, profileResponse)
 }
 
 func (c *profileController) ServeImages(ctx *gin.Context) {

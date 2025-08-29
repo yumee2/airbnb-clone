@@ -21,9 +21,16 @@ type CreateProfileRequest struct {
 
 type ProfileResponse struct {
 	ID          string    `json:"id"`
-	PhoneNumber string    `json:"phone_number"`
+	PhoneNumber string    `json:"phone_number,omitempty"`
 	Name        string    `json:"name"`
 	Surname     string    `json:"surname"`
-	DateOfBirth time.Time `json:"date_of_birth"`
+	DateOfBirth time.Time `json:"date_of_birth,omitempty"`
 	ImageURL    string    `json:"image_url"`
+}
+
+type PublicProfileResponse struct {
+	ID       string `json:"id"`
+	Name     string `json:"name"`
+	Surname  string `json:"surname"`
+	ImageURL string `json:"image_url"`
 }

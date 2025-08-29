@@ -10,7 +10,9 @@ func SetupProfileRoutes(r *gin.Engine, profileController ProfileController) {
 	authGroup.Use(middleware.AuthMiddleware())
 	{
 		authGroup.POST("/profiles", profileController.CreateProfile)
+		authGroup.GET("/user/me", profileController.GetYourProfile)
 	}
 
+	r.GET("/user/:id", profileController.GetProfile)
 	r.GET("/uploads/:filename", profileController.ServeImages)
 }
