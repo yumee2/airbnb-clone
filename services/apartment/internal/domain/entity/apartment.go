@@ -27,7 +27,7 @@ type Apartment struct {
 
 	MaxGuests     int     `gorm:"not null"`
 	BedroomNumber int     `gorm:"not null"`
-	Images        []Image `gorm:"foreignKey:ApartmentID"`
+	Images        []Image `gorm:"foreignKey:ApartmentID;constraint:OnDelete:CASCADE;"`
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 }
