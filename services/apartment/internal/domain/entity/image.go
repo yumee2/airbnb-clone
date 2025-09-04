@@ -6,3 +6,9 @@ type Image struct {
 	Path        string `gorm:"size:255;not null"`
 	IsCover     bool   `gorm:"default:false"`
 }
+
+type ImageResponse struct {
+	ID      string `json:"id"`
+	URL     string `json:"url"`
+	IsCover bool   `json:"is_cover"`
+}

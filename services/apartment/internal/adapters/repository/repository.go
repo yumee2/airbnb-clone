@@ -16,6 +16,7 @@ type ApartmentRepository interface {
 	GetApartment(id string) (*entity.Apartment, error)
 	DeleteApartmentByID(id string) error
 	UpdateApartmentFields(id string, updates map[string]interface{}) error
+	AddImages(apartmentID string, images []entity.Image) error
 }
 
 type storage struct {
