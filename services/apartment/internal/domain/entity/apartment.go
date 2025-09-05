@@ -33,28 +33,28 @@ type Apartment struct {
 }
 
 type CreateApartmentRequest struct {
-	Title         string  `json:"title" binding:"required"`
-	Description   string  `json:"description"`
-	PricePerNight float64 `json:"price_per_night" binding:"required"`
+	Title         string  `form:"title" binding:"required"`
+	Description   string  `form:"description"`
+	PricePerNight float64 `form:"price_per_night" binding:"required"`
 
-	HouseNumber int    `json:"house_number" binding:"required"`
-	Street      string `json:"street" binding:"required"`
-	City        string `json:"city" binding:"required"`
-	State       string `json:"state"`
-	Country     string `json:"country" binding:"required"`
-	PostalCode  string `json:"postal_code"`
+	HouseNumber int    `form:"house_number" binding:"required"`
+	Street      string `form:"street" binding:"required"`
+	City        string `form:"city" binding:"required"`
+	State       string `form:"state"`
+	Country     string `form:"country" binding:"required"`
+	PostalCode  string `form:"postal_code"`
 
-	Latitude  float64 `json:"latitude"`
-	Longitude float64 `json:"longitude"`
+	Latitude  float64 `form:"latitude"`
+	Longitude float64 `form:"longitude"`
 
-	Wifi         bool `json:"wifi"`
-	Parking      bool `json:"parking"`
-	AirCondition bool `json:"air_condition"`
-	Kitchen      bool `json:"kitchen"`
-	PetFriendly  bool `json:"pet_friendly"`
+	Wifi         bool `form:"wifi"`
+	Parking      bool `form:"parking"`
+	AirCondition bool `form:"air_condition"`
+	Kitchen      bool `form:"kitchen"`
+	PetFriendly  bool `form:"pet_friendly"`
 
-	MaxGuests     int `json:"max_guests" binding:"required"`
-	BedroomNumber int `json:"bedroom_number" binding:"required"`
+	MaxGuests     int `form:"max_guests" binding:"required"`
+	BedroomNumber int `form:"bedroom_number" binding:"required"`
 }
 
 type UpdateApartmentRequest struct {

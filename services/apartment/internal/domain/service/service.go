@@ -8,7 +8,6 @@ import (
 	"mime/multipart"
 	"os"
 	"path/filepath"
-	"time"
 
 	"airbnb.com/services/apartment/internal/adapters/repository"
 	"airbnb.com/services/apartment/internal/domain/entity"
@@ -29,6 +28,10 @@ type apartmentService struct {
 }
 
 func NewApartmentService(repo repository.ApartmentRepository, uploadDir string, log *slog.Logger) ApartmentService {
+	if err := os.MkdirAll(uploadDir, 0755); err != nil {
+		log.Error("Failed to create upload directory: %v", slog.Attr{Key: "error", Value: slog.StringValue(err.Error())})
+		os.Exit(1)
+	}
 	return &apartmentService{repo: repo, uploadDir: uploadDir, log: log}
 }
 
@@ -193,7 +196,7 @@ func (s *apartmentService) saveImage(file *multipart.FileHeader, apartmentID str
 	}
 
 	ext := filepath.Ext(file.Filename)
-	filename := fmt.Sprintf("%s_%d%s", apartmentID, time.Now().Unix(), ext)
+	filename := fmt.Sprintf("%s_%s%s", apartmentID, uuid.New().String(), ext)
 	filePath := filepath.Join(s.uploadDir, filename)
 
 	src, err := file.Open()
