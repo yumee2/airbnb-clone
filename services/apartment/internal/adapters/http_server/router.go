@@ -11,5 +11,8 @@ func SetupProfileRoutes(r *gin.Engine, apartmentController ApartmentController) 
 	{
 		authGroup.POST("/apartment", apartmentController.CreateApartment)
 	}
+	r.PUT("/apartment/:id", apartmentController.UpdateApartment)
+	r.GET("/apartment/:id", apartmentController.GetApartment)
+	r.DELETE("/apartment/:id", apartmentController.DeleteApartment)
 	r.GET("/uploads/:filename", apartmentController.ServeImages)
 }

@@ -58,28 +58,28 @@ type CreateApartmentRequest struct {
 }
 
 type UpdateApartmentRequest struct {
-	Title         *string  `json:"title,omitempty"`
-	Description   *string  `json:"description,omitempty"`
-	PricePerNight *float64 `json:"price_per_night,omitempty"`
+	Title         *string  `form:"title,omitempty"`
+	Description   *string  `form:"description,omitempty"`
+	PricePerNight *float64 `form:"price_per_night,omitempty"`
 
-	HouseNumber *int    `json:"house_number,omitempty"`
-	Street      *string `json:"street,omitempty"`
-	City        *string `json:"city,omitempty"`
-	State       *string `json:"state,omitempty"`
-	Country     *string `json:"country,omitempty"`
-	PostalCode  *string `json:"postal_code,omitempty"`
+	HouseNumber *int    `form:"house_number,omitempty"`
+	Street      *string `form:"street,omitempty"`
+	City        *string `form:"city,omitempty"`
+	State       *string `form:"state,omitempty"`
+	Country     *string `form:"country,omitempty"`
+	PostalCode  *string `form:"postal_code,omitempty"`
 
-	Latitude  *float64 `json:"latitude,omitempty"`
-	Longitude *float64 `json:"longitude,omitempty"`
+	Latitude  *float64 `form:"latitude,omitempty"`
+	Longitude *float64 `form:"longitude,omitempty"`
 
-	Wifi         *bool `json:"wifi,omitempty"`
-	Parking      *bool `json:"parking,omitempty"`
-	AirCondition *bool `json:"air_condition,omitempty"`
-	Kitchen      *bool `json:"kitchen,omitempty"`
-	PetFriendly  *bool `json:"pet_friendly,omitempty"`
+	Wifi         *bool `form:"wifi,omitempty"`
+	Parking      *bool `form:"parking,omitempty"`
+	AirCondition *bool `form:"air_condition,omitempty"`
+	Kitchen      *bool `form:"kitchen,omitempty"`
+	PetFriendly  *bool `form:"pet_friendly,omitempty"`
 
-	MaxGuests     *int `json:"max_guests,omitempty"`
-	BedroomNumber *int `json:"bedroom_number,omitempty"`
+	MaxGuests     *int `form:"max_guests,omitempty"`
+	BedroomNumber *int `form:"bedroom_number,omitempty"`
 }
 
 type ApartmentResponse struct {

@@ -17,6 +17,8 @@ type ApartmentRepository interface {
 	DeleteApartmentByID(id string) error
 	UpdateApartmentFields(id string, updates map[string]interface{}) error
 	AddImages(apartmentID string, images []entity.Image) error
+	GetApartmentImages(apartmentID string) ([]entity.Image, error)
+	DeleteApartmentImages(apartmentID string) error
 }
 
 type storage struct {
@@ -103,4 +105,20 @@ func (s *storage) AddImages(apartmentID string, images []entity.Image) error {
 		images[i].ApartmentID = apartmentID
 	}
 	return s.db.Create(&images).Error
+}
+
+func (s *storage) GetApartmentImages(apartmentID string) ([]entity.Image, error) {
+	var images []entity.Image
+	err := s.db.Where("apartment_id = ?", apartmentID).Find(&images).Error
+	return images, err
+}
+
+func (s *storage) DeleteApartmentImages(apartmentID string) error {
+	const fn = "adapters.repository.DeleteApartmentImages"
+
+	result := s.db.Delete(&entity.Image{}, "apartment_id = ?", apartmentID)
+	if result.Error != nil {
+		return fmt.Errorf("%s: database error: %w", fn, result.Error)
+	}
+	return nil
 }

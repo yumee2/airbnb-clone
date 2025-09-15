@@ -166,6 +166,19 @@ func (s *apartmentService) UpdateApartment(id string, updates map[string]interfa
 	}
 
 	if len(newImages) > 0 {
+		images, err := s.repo.GetApartmentImages(id)
+		if err != nil {
+			log.Error("failed to update apartment fields", slog.String("error", err.Error()))
+			return nil, err
+		}
+		for _, img := range images {
+			os.Remove(img.Path)
+		}
+		err = s.repo.DeleteApartmentImages(id)
+		if err != nil {
+			log.Error("failed to update apartment fields", slog.String("error", err.Error()))
+			return nil, err
+		}
 		if err := s.repo.AddImages(id, newImages); err != nil {
 			for _, img := range newImages {
 				os.Remove(img.Path)
