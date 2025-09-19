@@ -1,14 +1,14 @@
 package httpserver
 
 import (
+	"airbnb-clone/profile/internal/adapters/http_server/middleware"
+	"airbnb-clone/profile/internal/domain/entity"
+	"airbnb-clone/profile/internal/domain/service"
 	"errors"
 	"log/slog"
 	"net/http"
 	"time"
 
-	"airbnb.com/services/profile/internal/adapters/http_server/middleware"
-	"airbnb.com/services/profile/internal/domain/entity"
-	"airbnb.com/services/profile/internal/domain/service"
 	"github.com/gin-gonic/gin"
 )
 

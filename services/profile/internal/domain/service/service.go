@@ -1,6 +1,8 @@
 package service
 
 import (
+	"airbnb-clone/profile/internal/adapters/repository"
+	"airbnb-clone/profile/internal/domain/entity"
 	"errors"
 	"fmt"
 	"io"
@@ -9,9 +11,6 @@ import (
 	"os"
 	"path/filepath"
 	"time"
-
-	"airbnb.com/services/profile/internal/adapters/repository"
-	"airbnb.com/services/profile/internal/domain/entity"
 )
 
 type ProfileService interface {

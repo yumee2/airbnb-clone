@@ -1,6 +1,8 @@
 package service
 
 import (
+	"airbnb-clone/auth/internal/adapters/repository"
+	"airbnb-clone/auth/internal/domain/entity"
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
@@ -8,11 +10,8 @@ import (
 	"os"
 	"time"
 
-	"airbnb.com/services/auth/internal/domain/entity"
 	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"
-
-	"airbnb.com/services/auth/internal/adapters/repository"
 )
 
 type AuthService interface {

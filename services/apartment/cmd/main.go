@@ -1,14 +1,14 @@
 package main
 
 import (
+	httpserver "airbnb-clone/apt/internal/adapters/http_server"
+	"airbnb-clone/apt/internal/adapters/repository"
+	"airbnb-clone/apt/internal/config"
+	"airbnb-clone/apt/internal/domain/service"
+
 	"log"
 	"log/slog"
 	"os"
-
-	httpserver "airbnb.com/services/apartment/internal/adapters/http_server"
-	"airbnb.com/services/apartment/internal/adapters/repository"
-	"airbnb.com/services/apartment/internal/config"
-	"airbnb.com/services/apartment/internal/domain/service"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"

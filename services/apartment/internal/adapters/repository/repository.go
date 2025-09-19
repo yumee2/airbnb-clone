@@ -1,11 +1,11 @@
 package repository
 
 import (
+	"airbnb-clone/apt/internal/config"
+	"airbnb-clone/apt/internal/domain/entity"
 	"errors"
 	"fmt"
 
-	"airbnb.com/services/apartment/internal/config"
-	"airbnb.com/services/apartment/internal/domain/entity"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"

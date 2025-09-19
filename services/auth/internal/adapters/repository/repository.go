@@ -1,11 +1,11 @@
 package repository
 
 import (
+	"airbnb-clone/auth/internal/config"
+	domain "airbnb-clone/auth/internal/domain/entity"
 	"errors"
 	"fmt"
 
-	"airbnb.com/services/auth/internal/config"
-	domain "airbnb.com/services/auth/internal/domain/entity"
 	"github.com/jackc/pgx/v5/pgconn"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

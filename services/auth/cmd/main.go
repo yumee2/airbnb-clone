@@ -1,14 +1,14 @@
 package main
 
 import (
+	"airbnb-clone/auth/internal/adapters/http_server"
+	"airbnb-clone/auth/internal/adapters/repository"
+	"airbnb-clone/auth/internal/config"
+	"airbnb-clone/auth/internal/domain/service"
 	"log"
 	"log/slog"
 	"os"
 
-	"airbnb.com/services/auth/internal/adapters/http_server"
-	"airbnb.com/services/auth/internal/adapters/repository"
-	"airbnb.com/services/auth/internal/config"
-	"airbnb.com/services/auth/internal/domain/service"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )

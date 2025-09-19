@@ -1,12 +1,15 @@
 package main
 
 import (
+	"airbnb-clone/booking/internal/config"
+	"context"
+	"fmt"
 	"log"
 	"log/slog"
 	"os"
 
-	"airbnb.com/services/booking/internal/config"
 	"github.com/joho/godotenv"
+	"github.com/segmentio/kafka-go"
 )
 
 const (
@@ -22,6 +25,22 @@ func main() {
 
 	log := createLogger(cfg.Env)
 	log.Info("booking app just started")
+
+	ctx := context.Background()
+
+	reader := kafka.NewReader(kafka.ReaderConfig{
+		Brokers: []string{"localhost:9092"},
+		Topic:   "apt-create",
+	})
+	defer reader.Close()
+
+	for {
+		msg, err := reader.ReadMessage(ctx)
+		if err != nil {
+			break
+		}
+		fmt.Printf("message at offset %d: %s = %s\n", msg.Offset, string(msg.Key), string(msg.Value))
+	}
 }
 
 func createLogger(env string) *slog.Logger {

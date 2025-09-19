@@ -1,6 +1,8 @@
 package service
 
 import (
+	"airbnb-clone/apt/internal/adapters/repository"
+	"airbnb-clone/apt/internal/domain/entity"
 	"errors"
 	"fmt"
 	"io"
@@ -9,8 +11,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"airbnb.com/services/apartment/internal/adapters/repository"
-	"airbnb.com/services/apartment/internal/domain/entity"
 	"github.com/google/uuid"
 )
 

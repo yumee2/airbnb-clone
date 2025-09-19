@@ -1,7 +1,8 @@
 package httpserver
 
 import (
-	"airbnb.com/services/apartment/internal/adapters/http_server/middleware"
+	"airbnb-clone/apt/internal/adapters/http_server/middleware"
+
 	"github.com/gin-gonic/gin"
 )
 

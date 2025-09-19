@@ -1,11 +1,10 @@
 package http_server
 
 import (
+	"airbnb-clone/auth/internal/domain/service"
 	"errors"
 	"log/slog"
 	"net/http"
-
-	"airbnb.com/services/auth/internal/domain/service"
 
 	"github.com/gin-gonic/gin"
 )
