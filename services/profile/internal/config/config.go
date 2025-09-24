@@ -29,7 +29,7 @@ type PostgresConnect struct {
 }
 
 func MustLoad() *Config {
-	configPath := os.Getenv("CONFIG_PATH")
+	configPath := "config/local.yaml"
 	if configPath == "" {
 		log.Fatal("config has not been setted")
 	}

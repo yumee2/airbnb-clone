@@ -4,11 +4,9 @@ import (
 	"airbnb-clone/booking/internal/config"
 	"context"
 	"fmt"
-	"log"
 	"log/slog"
 	"os"
 
-	"github.com/joho/godotenv"
 	"github.com/segmentio/kafka-go"
 )
 
@@ -18,9 +16,6 @@ const (
 )
 
 func main() {
-	if err := godotenv.Load("services/booking/.env"); err != nil {
-		log.Println("No .env file found")
-	}
 	cfg := config.MustLoad()
 
 	log := createLogger(cfg.Env)

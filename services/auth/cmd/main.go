@@ -5,12 +5,10 @@ import (
 	"airbnb-clone/auth/internal/adapters/repository"
 	"airbnb-clone/auth/internal/config"
 	"airbnb-clone/auth/internal/domain/service"
-	"log"
 	"log/slog"
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 )
 
 const (
@@ -19,9 +17,6 @@ const (
 )
 
 func main() {
-	if err := godotenv.Load("services/auth/.env"); err != nil {
-		log.Println("No .env file found")
-	}
 	cfg := config.MustLoad()
 
 	log := createLogger(cfg.Env)

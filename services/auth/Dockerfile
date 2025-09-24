@@ -7,17 +7,16 @@ RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o apt ./cmd
+RUN CGO_ENABLED=0 GOOS=linux go build -o auth ./cmd
 
 FROM alpine:3.20
 
 WORKDIR /root/
 
-COPY --from=builder /app/apt .
+COPY --from=builder /app/auth .
 COPY --from=builder /app/config  ./config
 
 
+EXPOSE 8000
 
-EXPOSE 8003
-
-CMD ["./apt"]
+CMD ["./auth"]

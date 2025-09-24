@@ -7,17 +7,16 @@ RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o apt ./cmd
+RUN CGO_ENABLED=0 GOOS=linux go build -o profile ./cmd
 
 FROM alpine:3.20
 
 WORKDIR /root/
 
-COPY --from=builder /app/apt .
+COPY --from=builder /app/profile .
 COPY --from=builder /app/config  ./config
 
 
+EXPOSE 8002
 
-EXPOSE 8003
-
-CMD ["./apt"]
+CMD ["./profile"]

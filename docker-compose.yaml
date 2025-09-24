@@ -1,0 +1,115 @@
+version: "3.9"
+services:
+  apt-service:
+    build: ./services/apartment
+    container_name: apt-service
+    ports:
+      - "8003:8003"
+    env_file:
+      - ./services/apartment/.env
+    depends_on:
+      postgres-apt:
+        condition: service_healthy
+
+  auth-service:
+    build: ./services/auth
+    container_name: auth-service
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./services/auth/.env
+    depends_on:
+      postgres-auth:
+        condition: service_healthy
+
+  booking-service:
+    build: ./services/booking
+    container_name: booking-service
+    ports:
+      - "8004:8004"
+    env_file:
+      - ./services/booking/.env
+    depends_on:
+      postgres-booking:
+        condition: service_healthy
+
+  profile-service:
+    build: ./services/profile
+    container_name: profile-service
+    ports:
+      - "8002:8002"
+    env_file:
+      - ./services/profile/.env
+    depends_on:
+      postgres-apt:
+        condition: service_healthy
+
+  postgres-apt:
+    image: postgres:15
+    container_name: postgres-apt
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1423
+      POSTGRES_DB: airbnb_apartment
+    volumes:
+      - postgres_apt_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  
+  postgres-auth:
+    image: postgres:15
+    container_name: postgres-auth
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1423
+      POSTGRES_DB: airbnb_auth
+    volumes:
+      - postgres_auth_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  postgres-booking:
+    image: postgres:15
+    container_name: postgres-booking
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1423
+      POSTGRES_DB: airbnb_booking
+    volumes:
+      - postgres_booking_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  postgres-profile:
+    image: postgres:15
+    container_name: postgres-profile
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1423
+      POSTGRES_DB: airbnb_profile
+    volumes:
+      - postgres_profile_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_apt_data:
+  postgres_auth_data:
+  postgres_booking_data:
+  postgres_profile_data:
